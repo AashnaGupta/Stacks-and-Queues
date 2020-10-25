@@ -1,0 +1,350 @@
+package com.company;
+
+public class Main {
+
+    public static void main(String[] args) {
+        //task 1
+        int[] myStack = createStack();
+        System.out.print("101 element array:");
+        for (int i = 0; i < myStack.length; i++) {
+            System.out.print(myStack[i]);
+        }
+        System.out.println("");
+
+        for (int i = 10; i > 0; i--)
+            push(myStack, i);
+        System.out.println("Task 1 push- You should print [10,9,8,7,6,5,4,3,2,1]: " + (prettyPrintStack(myStack)));
+
+        pop(myStack);
+        System.out.println("Task 1 pop- Popped once array: " + prettyPrintStack(myStack));
+
+        //task 2
+        task2();
+
+        //task 3
+        int[] sharesStack = createStack();
+        int[] priceStack = createStack();
+        push(sharesStack, 100); // {1,100,0,0,0,0, ...}
+        push(priceStack, 20000); // {1,20000,0,0,0,0, ...}
+        push(sharesStack, 50);
+        push(priceStack, 21000);
+        //System.out.println("This should print: \nShares\tPrice\n100\t\t$200.00\n50\t\t$210.00");
+        printReportFILO(sharesStack, priceStack);
+        System.out.print(runReportFILO(sharesStack, priceStack));
+        System.out.println("");
+        buyFILO(sharesStack, priceStack, 20, 30050);
+        System.out.println("New Report: ");
+        printReportFILO(sharesStack, priceStack);
+        System.out.println("This should print -61000.");
+        System.out.println(sellFILO(sharesStack, priceStack, 30, 25000));
+        System.out.println("This should print: \nShares\tPrice\n100\t\t$200.00\n40\t\t$210.00");
+        System.out.println(runReportFILO(sharesStack, priceStack));
+        push(sharesStack,10);
+        push(priceStack,19999);
+        System.out.println("This should print 20267.");
+        System.out.println(averageFILO(sharesStack, priceStack));
+
+        //Task 4
+        int[] myQueue = createQueue();
+        System.out.print("101 element array:");
+        for (int i = 0; i < myQueue.length; i++) {
+            System.out.print(myQueue[i]);
+        }
+        System.out.println("");
+        for (int i = 10; i > 0; i--)
+            enqueue(myQueue, i);
+        System.out.println("Task 4 enqueue- You should print [10,9,8,7,6,5,4,3,2,1]: " + (prettyPrintQueue(myQueue)));
+        System.out.println("Task 4 dequeueValue: " + dequeue(myQueue));
+        System.out.println("Task 4- dequeued once: " + prettyPrintQueue(myQueue));
+
+        //task 5
+        task5();
+
+        //task 6
+        int[] a = createQueue();
+        int[] b = createQueue();
+        for (int i = 1; i <= 5; i += 2)
+            enqueue(a, i);
+        for (int i = 2; i <= 6; i += 2)
+            enqueue(b, i);
+        System.out.println("Task 6- " + prettyPrintQueue(merge(a,b)));
+        System.out.println("Task 6- " + dumpQueue(merge(a,b)));
+    }
+
+    public static int[] createStack() {
+        int[] stack = new int[101];
+        return stack;
+    }
+
+    public static void push(int[] myStack, int data) {
+        int numElements = myStack[0];
+        numElements++;
+        myStack[0] = numElements;
+        myStack[numElements] = data;
+    }
+
+
+    public static int pop(int[] stack) {
+        if (stack[0] == 0) {
+            System.out.println("Error");
+            return 0;
+        }
+        int numElements = stack[0];
+        int popValue = stack[numElements];
+        numElements--;
+        stack[0] = numElements;
+        return popValue;
+    }
+
+    public static String prettyPrintStack(int[] stack) {
+        String rv = "[";
+        int numElements = stack[0];
+
+        for (int i = 1; i < numElements; i++)
+            rv = rv + stack[i] + ",";
+
+        if (numElements != 0)
+            rv = rv + stack[numElements] + "]";
+        else
+            rv = rv + "]";
+
+        return rv;
+    }
+
+    public static String dumpStack(int[] stack) {
+        String rv = "{";
+        for (int i = 0; i < stack.length; i++)
+            if (i == stack.length - 1)
+                rv = rv + stack[i] + "}";
+            else
+                rv = rv + stack[i] + ",";
+        return rv;
+    }
+
+    public static void task2() {
+        int[] newStack = new int[20];
+        push(newStack, 9);
+        push(newStack, 8);
+        push(newStack, 7);
+        push(newStack, 6);
+        push(newStack, 5);
+        push(newStack, 4);
+        push(newStack, 3);
+        pop(newStack); //pops 3
+        pop(newStack); //pops 4
+        pop(newStack); //pops 5
+        push(newStack, 1);
+        push(newStack, 2);
+        push(newStack, 3);
+        push(newStack, 4);
+        pop(newStack); //pops 4
+        pop(newStack); //pops 3
+        pop(newStack); //pops 2
+        pop(newStack); //pops 1
+        pop(newStack); //pops 6
+        System.out.println("Task 2 - You should print [9,8,7]: " + (prettyPrintStack(newStack))); //PUSH + POP + PUSH + POP
+        System.out.println("Task 2- Dumpstack: " + dumpStack(newStack)); // {3,9,8,7,6,1,2,3,4,0,0,0,0,...}
+    }
+
+    public static void printReportFILO(int[] shares, int[] price) {
+        System.out.println("Shares" + "\t" + "Price");
+        for (int i = 1; i <= price[0]; i++) {
+            int dollars = price[i] / 100;
+            int cents = price[i] % 100;
+            if (cents <= 9) {
+                System.out.println(shares[i] + "\t\t" + "$" + dollars + ".0" + cents);
+            } else
+                System.out.println(shares[i] + "\t\t" + "$" + dollars + "." + cents);
+        }
+    }
+
+    public static String runReportFILO(int[] shares, int[] price) {
+        String rv = "{Shares Price}";
+        for (int i = 1; i <= price[0]; i++) {
+            int dollars = price[i] / 100;
+            int cents = price[i] % 100;
+            if (cents <= 9)
+                rv = rv + "{" + shares[i] + " $" + dollars + ".0" + cents + "}";
+            else
+                rv = rv + "{" + shares[i] + " $" + dollars + "." + cents + "}";
+        }
+        return rv;
+    }
+
+    public static void buyFILO(int[] shares, int[] price, int numShares, int pricePerShare) {
+        push(shares, numShares);
+        push(price, pricePerShare);
+    }
+
+    public static int sellFILO(int[] shares, int[] price, int numShares, int pricePerShare){
+      int firstShare = pop(shares);
+      int remainingShares = firstShare - numShares;
+
+      int originalShare = (firstShare * price[price[0]]);
+
+      int indexFromBack = 1;
+        while (remainingShares < 0) {
+            int nextShare = pop(shares);
+            originalShare = originalShare + (nextShare * price[(shares[0]+1)]);
+            remainingShares = nextShare + remainingShares;
+            pop(price);
+            indexFromBack++;
+        }
+        int counter = 1;
+        for(int i = 1; i< shares.length; i++){
+            if (shares[i]>0)
+                counter++;
+        }
+        if (remainingShares>0) {
+            int sharesTaken = shares[counter-indexFromBack];
+            remainingShares = sharesTaken - remainingShares;
+            originalShare = originalShare - ((sharesTaken-remainingShares) * price[(shares[0]+1)]);
+            shares[counter - indexFromBack] = (sharesTaken-remainingShares);
+            shares[0] = shares[(0)] + 1; //replaces the value in shares with the reduced value
+        }
+
+
+      int sellPrice = numShares * pricePerShare;
+        int netMoney = sellPrice- originalShare;//adds in the new shares
+        if(netMoney > 0) //checks for profit
+            System.out.println("profit");
+        else
+            System.out.println("loss");
+    return netMoney;
+    }
+
+    public static int averageFILO(int[] shares, int[] price){
+        int totalShares = 0;
+        int totalValue = 0;
+        for(int i=1; i<= shares[0];i++)
+            totalShares = totalShares + shares[i];
+        for(int i=1; i<= shares[0];i++)
+            totalValue = totalValue + (shares[i]*price[i]);
+        int average = totalValue / totalShares;
+        int decimal = totalValue % totalShares;
+        if (decimal>=(totalShares/2));
+            average= average +1;
+        return average;
+    }
+
+
+    public static int[] createQueue() {
+        int[] queue = new int[101];
+        return queue;
+    }
+
+    public static void enqueue(int[] queue, int data) {
+        int numElements = queue[0];
+        numElements++;
+        queue[0] = numElements;
+        queue[numElements] = data;
+    }
+
+    public static int dequeue(int[] queue) {
+        if (queue[0] == 0) {
+            System.out.println("Error");
+            return 0;
+        }
+        int numElements = queue[0];
+        int i = 1;
+        int occupied = 0;
+        while (queue[i] > 0) {
+            occupied++;
+            i++;
+        }
+        int dequeueValue = queue[occupied - numElements + 1];
+        numElements--;
+        queue[0] = numElements;
+        for (int j = 1; j <= numElements + 1; j++)
+            queue[j] = queue[j + 1];
+        return dequeueValue;
+    }
+
+    public static String prettyPrintQueue(int[] queue) {
+        String rv = "[";
+        int numElements = queue[0];
+
+        for (int i = 1; i < numElements; i++)
+            rv = rv + queue[i] + ",";
+
+        if (numElements != 0)
+            rv = rv + queue[numElements] + "]";
+        else
+            rv = rv + "]";
+
+        return rv;
+    }
+
+    public static String dumpQueue(int[] queue) {
+        String rv = "{";
+        for (int i = 0; i < queue.length; i++)
+            if (i == queue.length - 1)
+                rv = rv + queue[i] + "}";
+            else
+                rv = rv + queue[i] + ",";
+        return rv;
+    }
+
+    public static void task5() {
+        int[] newQueue = new int[20];
+        enqueue(newQueue, 9);
+        enqueue(newQueue, 8);
+        enqueue(newQueue, 7);
+        enqueue(newQueue, 6);
+        enqueue(newQueue, 5);
+        enqueue(newQueue, 4);
+        enqueue(newQueue, 3);
+        dequeue(newQueue); //dequeues 9
+        dequeue(newQueue); //dequeues 8
+        dequeue(newQueue); //dequeues 7
+        enqueue(newQueue, 1);
+        enqueue(newQueue, 2);
+        enqueue(newQueue, 3);
+        enqueue(newQueue, 4);
+        dequeue(newQueue); //dequeues 6
+        dequeue(newQueue); //dequeues 5
+        dequeue(newQueue); //dequeues 4
+        dequeue(newQueue); //dequeues 3
+        dequeue(newQueue); //dequeues 1
+        System.out.println("Task 5- " + prettyPrintQueue(newQueue));
+    }
+
+    public static int[] merge(int[] a, int[] b) {
+        int i = 1;
+        int occupiedA = 0;
+        while (a[i] > 0) {
+            occupiedA++;
+            i++;
+        }
+        int j = 1;
+        int occupiedB = 0;
+        while (a[j] > 0) {
+            occupiedB++;
+            j++;
+        }
+        int[] qA = new int[(occupiedA+2)];
+        int[] qB = new int[(occupiedB+2)];
+        for (int k = 0; k < (occupiedA+1); k++){
+            if(a[k]!=0)
+                qA[k] = a[k];
+        }
+        for (int k = 0; k < (occupiedB+1); k++) {
+            if(b[k]!=0)
+                qB[k] = b[k];
+        }
+
+        int nextA = qA[1];
+        int nextB = qB[1];
+        int[] result = new int[((qA.length + qB.length)-3)];
+        for(int r=1; r < result.length; r++) {
+            enqueue(result, nextA);
+            dequeue(qA);
+            nextA = qA[1];
+            r++;
+            enqueue(result, nextB);
+            dequeue(qB);
+            nextB = qB[1];
+        }
+        return result;
+    }
+}
